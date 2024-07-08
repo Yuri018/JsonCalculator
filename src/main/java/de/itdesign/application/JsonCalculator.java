@@ -93,7 +93,16 @@ public class JsonCalculator {
 
         // Преобразование значений полей в список значений
         List<Double> values = entries.stream()
-                .map(entry -> fieldsToDouble(entry, fields))
+                .map(entry -> IntStream.range(0, fields.length())
+                        .mapToDouble(i -> {
+                            String[] path = fields.getString(i).split("\\.");
+                            Object value = entry;
+                            for (String key : path) {
+                                value = ((JSONObject) value).get(key);
+                            }
+                            return ((Number) value).doubleValue();
+                        })
+                        .sum())
                 .toList();
 
         // Вычисление результата на основе функции
@@ -107,16 +116,16 @@ public class JsonCalculator {
     }
 
     // Метод для извлечения значений полей из JSON объекта
-    private static double fieldsToDouble(JSONObject entry, JSONArray fields) {
-        return IntStream.range(0, fields.length())
-                .mapToDouble(i -> {
-                    String[] path = fields.getString(i).split("\\.");
-                    Object value = entry;
-                    for (String key : path) {
-                        value = ((JSONObject) value).get(key);
-                    }
-                    return ((Number) value).doubleValue();
-                })
-                .sum();
-    }
+//    private static double fieldsToDouble(JSONObject entry, JSONArray fields) {
+//        return IntStream.range(0, fields.length())
+//                .mapToDouble(i -> {
+//                    String[] path = fields.getString(i).split("\\.");
+//                    Object value = entry;
+//                    for (String key : path) {
+//                        value = ((JSONObject) value).get(key);
+//                    }
+//                    return ((Number) value).doubleValue();
+//                })
+//                .sum();
+//    }
 }
