@@ -1,0 +1,36 @@
+{
+  "operations": [
+    {
+      "name": "important",
+      "function": "average",
+      "field": [
+        "population"
+      ],
+      "filter": "M.*"
+    },
+    {
+      "name": "information",
+      "function": "sum",
+      "field": [
+        "extendedStatistics.area"
+      ],
+      "filter": ".*burg"
+    },
+    {
+      "name": "for",
+      "function": "min",
+      "field": [
+        "extendedStatistics.area"
+      ],
+      "filter": ".*n.+"
+    },
+    {
+      "name": "future",
+      "function": "max",
+      "field": [
+        "population"
+      ],
+      "filter": ".*e.*n.*"
+    }
+  ]
+}

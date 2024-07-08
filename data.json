@@ -1,0 +1,60 @@
+{
+  "entries": [
+    {
+      "name": "Stuttgart",
+      "population": 601646,
+      "extendedStatistics": {
+        "area": 207.36
+      }
+    },
+    {
+      "name": "Moskau",
+      "population": 10563038,
+      "extendedStatistics": {
+        "area": 1081.5
+      }
+    },
+    {
+      "name": "Washington DC",
+      "population": 588292,
+      "extendedStatistics": {
+        "area": 3323.7
+      }
+    },
+    {
+      "name": "München",
+      "population": 1330440,
+      "extendedStatistics": {
+        "area": 310.43
+      }
+    },
+    {
+      "name": "Berlin",
+      "population": 3440441,
+      "extendedStatistics": {
+        "area": 891.85
+      }
+    },
+    {
+      "name": "Hamburg",
+      "population": 1774224,
+      "extendedStatistics": {
+        "area": 755.264
+      }
+    },
+    {
+      "name": "Mainz",
+      "population": 197778,
+      "extendedStatistics": {
+        "area": 97.76
+      }
+    },
+    {
+      "name": "Regensburg",
+      "population": 134218,
+      "extendedStatistics": {
+        "area": 80.76
+      }
+    }
+  ]
+}
