@@ -12,7 +12,8 @@
       "name": "information",
       "function": "sum",
       "field": [
-        "extendedStatistics.area"
+        "extendedStatistics",
+        "area"
       ],
       "filter": ".*burg"
     },
@@ -20,7 +21,8 @@
       "name": "for",
       "function": "min",
       "field": [
-        "extendedStatistics.area"
+        "extendedStatistics",
+        "area"
       ],
       "filter": ".*n.+"
     },
