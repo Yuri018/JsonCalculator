@@ -14,6 +14,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+/**
+ * class for working with data and operations with them
+ */
 public class JsonCalculator {
     public static void main(String[] args) {
         // Don't change this part
@@ -27,18 +30,18 @@ public class JsonCalculator {
 
             // <your code here>
             try {
-                // Чтение JSON файлов и Парсинг содержимого JSON файлов в объекты
+                // Reading JSON files and Parsing the contents of JSON files into objects
                 JSONObject dataJson = new JSONObject(new String(Files.readAllBytes(Paths.get(DATA_FILE))));
                 JSONObject operationsJson = new JSONObject(new String(Files.readAllBytes(Paths.get(OPERATIONS_FILE))));
 
-                // Извлечение массивов из JSON объектов
+                // Extracting arrays from JSON objects
                 JSONArray data = dataJson.getJSONArray("entries");
                 JSONArray operations = operationsJson.getJSONArray("operations");
 
-                // Обработка данных и операций
+                // Data and Operation Processing
                 JSONArray results = processing(data, operations);
 
-                // Запись результатов в JSON файл
+                // Writing results to a JSON file
                 Files.write(Paths.get(OUTPUT_FILE), results.toString(2).getBytes());
             } catch (IOException e) {
                 System.out.println("Error processing: " + e.getMessage());
@@ -48,32 +51,36 @@ public class JsonCalculator {
         }
     }
 
-    // Метод для обработки данных и операций
+    /**
+     * Method for processing data and operations
+     * @param entries - data array for processing
+     * @param operations - array of data processing operations
+     * @return - returns an array of processed data
+     */
     static JSONArray processing(JSONArray entries, JSONArray operations) {
         JSONArray results = new JSONArray();
 
-        // Итерация по операциям
+        // Iterate over operations
         IntStream.range(0, operations.length()).mapToObj(operations::getJSONObject).forEach(operation -> {
             String name = operation.optString("name");
             String function = operation.optString("function");
             String filter = operation.optString("filter");
             JSONArray fields = operation.optJSONArray("field");
-            System.out.println(fields.toString());
             if (fields == null) {
                 throw new IllegalArgumentException("Operation must have a field array");
             }
 
-            // Компиляция регулярного выражения для фильтрации
+            // Compiling a regular expression for filtering
             Pattern pattern = Pattern.compile(filter);
             List<JSONObject> filteredEntries = IntStream.range(0, entries.length())
                     .mapToObj(entries::getJSONObject)
                     .filter(entry -> pattern.matcher(entry.getString("name")).matches())
                     .collect(Collectors.toList());
 
-            // Вычисление результата
+            // Calculating the result
             double result = calculate(function, filteredEntries, fields);
 
-            // Создание объекта результата и добавление в массив результатов
+            // Create a result object and add it to the results array
             JSONObject resultObject = new JSONObject();
             resultObject.put("name", name);
             resultObject.put("roundedValue", formatDouble(result));
@@ -83,30 +90,41 @@ public class JsonCalculator {
         return results;
     }
 
-    // Форматирование добавляемого значения
+    /**
+     * Formatting the added value
+     * @param value - value to format the number of characters to 2 after floating point
+     * @return - returns a string value
+     */
     private static String formatDouble(double value) {
         DecimalFormat df = new DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.US));
         return df.format(value);
     }
 
-    // Метод для вычисления результата операции
+    /**
+     * Method for calculating the result of an operation
+     * @param function - function for which calculations need to be made
+     * @param entries - list of objects for which calculations need to be made
+     * @param fields - fields that determine the path to the calculated value
+     * @return double - returns a calculated value
+     */
     private static double calculate(String function, List<JSONObject> entries, JSONArray fields) {
 
-        // Преобразование значений полей в список значений
+        // Convert field values to a list of values
         List<Double> values = entries.stream()
-                .map(entry -> IntStream.range(0, fields.length())
-                        .mapToDouble(i -> {
-                            String[] path = fields.getString(i).split("\\.");
-                            Object value = entry;
-                            for (String key : path) {
-                                value = ((JSONObject) value).get(key);
-                            }
-                            return ((Number) value).doubleValue();
-                        })
-                        .sum())
+                .map(entry -> {
+                    if (fields.length() == 1) {
+                        Object value = entry.get(fields.getString(0));
+                        return ((Number) value).doubleValue();
+                    } else if (fields.length() == 2) {
+                        Object value = entry.getJSONObject(fields.getString(0)).get(fields.getString(1));
+                        return ((Number) value).doubleValue();
+                    } else {
+                        return null;
+                    }
+                })
                 .toList();
 
-        // Вычисление результата на основе функции
+        // Calculate result based on function
         return switch (function) {
             case "min" -> values.stream().mapToDouble(Double::doubleValue).min().orElse(0);
             case "max" -> values.stream().mapToDouble(Double::doubleValue).max().orElse(0);
@@ -115,18 +133,4 @@ public class JsonCalculator {
             default -> throw new IllegalArgumentException("Unknown function: " + function);
         };
     }
-
-    // Метод для извлечения значений полей из JSON объекта
-//    private static double fieldsToDouble(JSONObject entry, JSONArray fields) {
-//        return IntStream.range(0, fields.length())
-//                .mapToDouble(i -> {
-//                    String[] path = fields.getString(i).split("\\.");
-//                    Object value = entry;
-//                    for (String key : path) {
-//                        value = ((JSONObject) value).get(key);
-//                    }
-//                    return ((Number) value).doubleValue();
-//                })
-//                .sum();
-//    }
 }

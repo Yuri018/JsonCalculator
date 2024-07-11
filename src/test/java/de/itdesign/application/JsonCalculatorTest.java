@@ -12,12 +12,18 @@ import java.nio.file.Paths;
 
 import static org.junit.Assert.assertEquals;
 
-
+/**
+ * Test class to check correct data processing
+ */
 public class JsonCalculatorTest {
 
     private JSONArray data;
     private JSONArray operations;
 
+    /**
+     * Class for creating test data and operations with it
+     * @throws IOException - class for handling exceptions when performing I/O operations
+     */
     @Before
     public void setup() throws IOException {
         // Reading JSON files
@@ -33,6 +39,9 @@ public class JsonCalculatorTest {
         operations = operationsJson.getJSONArray("operations");
     }
 
+    /**
+     * Test method for checking the results of test operations with test data
+     */
     @Test
     public void processingTest() {
         // Data and Operation Processing
